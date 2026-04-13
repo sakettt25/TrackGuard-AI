@@ -1,6 +1,14 @@
 # TrackGuard AI Setup Script
 # This script sets up the TrackGuard AI project
 
+$ErrorActionPreference = 'Stop'
+
+function Test-CompatibleVersion {
+    param([string]$VersionString)
+
+    return $VersionString -match '^Python 3\.(10|11|12)\.'
+}
+
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "  TrackGuard AI - Setup Script" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
@@ -10,10 +18,16 @@ Write-Host ""
 Write-Host "Checking Python installation..." -ForegroundColor Yellow
 try {
     $pythonVersion = & python --version 2>&1
+    if (!(Test-CompatibleVersion -VersionString $pythonVersion)) {
+        Write-Host "✗ Incompatible Python version detected: $pythonVersion" -ForegroundColor Red
+        Write-Host "Please use Python 3.10, 3.11, or 3.12." -ForegroundColor Yellow
+        exit 1
+    }
+
     Write-Host "✓ Python is installed: $pythonVersion" -ForegroundColor Green
 } catch {
     Write-Host "✗ Python is not installed or not in PATH" -ForegroundColor Red
-    Write-Host "Please install Python 3.8+ from https://www.python.org/" -ForegroundColor Yellow
+    Write-Host "Please install Python 3.10+ from https://www.python.org/" -ForegroundColor Yellow
     exit 1
 }
 
@@ -36,7 +50,15 @@ Write-Host "Installing Python dependencies..." -ForegroundColor Yellow
 Write-Host "This may take a few minutes..." -ForegroundColor Yellow
 try {
     & python -m pip install --upgrade pip
+    if ($LASTEXITCODE -ne 0) {
+        throw 'pip upgrade failed'
+    }
+
     & python -m pip install -r requirements.txt
+    if ($LASTEXITCODE -ne 0) {
+        throw 'requirements installation failed'
+    }
+
     Write-Host "✓ Dependencies installed successfully" -ForegroundColor Green
 } catch {
     Write-Host "✗ Failed to install dependencies" -ForegroundColor Red

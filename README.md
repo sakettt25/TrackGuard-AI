@@ -23,7 +23,7 @@ TrackGuard AI is a real-time video analytics system designed for railway station
 ## Quick Start
 
 ### Prerequisites
-- **Python 3.8+**
+- **Python 3.10-3.12**
 - **Windows 10/11** (PowerShell scripts provided)
 - 4 GB RAM minimum (8 GB recommended)
 - NVIDIA GPU optional (CPU works fine)
